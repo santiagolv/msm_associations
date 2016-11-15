@@ -18,13 +18,44 @@
       <dd><%= @movie.description %></dd>
 
       <dt>Image url</dt>
-      <dd><%= @movie.image_url %></dd>
+      <dd><img src="<%= @movie.image_url %>" width="100"></dd>
 
       <dt>Director</dt>
-      <dd><a href="/directors/<%=@movie.director_id%>"><%= Director.find_by(:id=>@movie.director_id).name %></a></dd>
+      <dd><a href="/directors/<%=@movie.director_id%>"><%= @movie.director.name %></a></dd>
 
-    </dl>
+      <dt># of Characters</dt>
+      <dd><%= @movie.characters.count %></dd>
 
+      <dt>Cast</dt>
+      <dd>
+        <ul class="list-group">
+          <% @movie.characters.each do |character| %>
+          <li><a href="/characters/<%=character.id%>" class="list-group-item"><%=character.name %> (<%=character.actor.name%>)</a></li>
+          <% end %>
+          <li class="list-group-item list-group-item-success">Add a new character</li>
+          <form action="/create_character" method="post">
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
+            <input name="movie_id" type="hidden" value="<%=@movie.id%>"/>
+            <div class="form-group">
+              <label for="actor_id" class="control-label">
+                Actor
+              </label>
+              <%= select_tag(:actor_id, options_from_collection_for_select(Actor.all, :id, :name, @movie.id), :class => "form-control") %>
+            </div>
+            <p class="help-block">
+              <a href="/actors/new">or add a new actor</a>
+            </p>
+            <div class="form-group">
+              <label for="name" class="control-label">Name</label>
+              <input type="text" id="name" name="name" placeholder="Name" class="form-control"/>
+            </div>
+            <button class="btn btn-success">
+              Add Character
+            </button>
+          </ul>
+        </dd>
+      </dl>
+    </div>
     <div class="btn-group btn-group-justified">
       <a href="/movies" class="btn btn-primary">
         Back
@@ -37,4 +68,3 @@
       </a>
     </div>
   </div>
-</div>

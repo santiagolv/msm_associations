@@ -15,7 +15,35 @@
       <dd><%= @actor.bio %></dd>
 
       <dt>Image url</dt>
-      <dd><%= @actor.image_url %></dd>
+      <dd><img src="<%= @actor.image_url %>" width="100"></dd>
+      <dt>Filmography</dt>
+      <dd>
+        <ul class="list-group">
+          <% @actor.characters.each do |character| %>
+          <li><a href="/movies/<%=character.movie_id%>" class="list-group-item"><%=character.name %> (<%=Movie.find_by(:id=>character.movie_id).title%>)</a></li>
+          <% end %>
+          <li class="list-group-item list-group-item-success">Add a new character</li>
+          <form action="/create_character" method="post">
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>"/>
+            <input name="actor_id" type="hidden" value="<%=@actor.id%>"/>
+            <div class="form-group">
+              <label for="movie_id" class="control-label">
+                Movie
+              </label>
+              <%= select_tag(:movie_id, options_from_collection_for_select(Movie.all, :id, :title, @actor.id), :class => "form-control") %>
+            </div>
+            <p class="help-block">
+              <a href="/movies/new">or add a new movie</a>
+            </p>
+            <div class="form-group">
+              <label for="name" class="control-label">Name</label>
+              <input type="text" id="name" name="name" placeholder="Name" class="form-control"/>
+            </div>
+            <button class="btn btn-success">
+              Add Character
+            </button>
+          </ul>
+        </dd>
 
     </dl>
 
